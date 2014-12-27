@@ -23,6 +23,7 @@
 /***Cell Class***/
 function Cell() {
 	this.mine = false;
+	this.flag = false;
 	this.visited = false;
 	this.risk = 0;
 }
@@ -48,6 +49,7 @@ var initialize = function() {
 		} else if (numMines >= numRow * numCol - 1) {
 			alert("You are in MINESWEEPER'S ROULETTE mode.");
 			numMines = numRow * numCol - 1;	//Just for humor.
+			break;
 		} else {
 			break;
 		}
@@ -84,23 +86,35 @@ var initialize = function() {
 };
 
 
+/***Flagging/Unflagging Cells as Probable Mines***/
+var setFlag = function(grid, row, col) {
+	if(grid[row][col].flag) {
+		grid[row][col].flag = false;
+	} else {
+		grid[row][col].flag = true;
+	}
+};
+
+
 /***Game Response Each Time User Clicks a Cell***/
 var stomp = function(grid, row, col, numRow, numCol) {
-	var isInsideGrid;
-	grid[row][col].visited = true;
-	//!----->DISPLAY SQUARE<-----!
-	if (grid[row][col].mine === true) {
-		//!----->GAME OVER<-----!
-	} else if (grid[row][col].risk === 0) {
-		for(var i = -1; i <= 1; i++) {
-			for(var j = -1; j <= 1; j++) {
-				isInsideGrid = (a + i >= 0 && b + j >= 0 && a + i < numRow && b + j < numCol);
-				if(isInsideGrid && !(i === 0 && j === 0)) {
-					stomp(grid, row + i, col + j, numRow, numCol);
-				} 
+	if(row >= 0 && col >= 0 && row < numRow && col < numCol && !grid[row][col].visited && !grid[row][col].flag) {
+		grid[row][col].visited = true;
+		//!----->DISPLAY SQUARE<-----!
+		if (grid[row][col].mine === true) {
+			//!----->GAME OVER<-----!
+			return true;
+		} else if (grid[row][col].risk === 0) {
+			for(var i = -1; i <= 1; i++) {
+				for(var j = -1; j <= 1; j++) {
+					if(!(i === 0 && j === 0)) {
+						stomp(grid, row + i, col + j, numRow, numCol);
+					} 
+				}
 			}
 		}
 	}
+	return false;
 };
 
 
@@ -118,6 +132,63 @@ var winCheck = function(grid) {
 
 
 /***Print Grid***/
+var printGrid = function(grid) {
+	var report = [];
+	for(var i = 0; i < grid.length; i++) {
+		report[i] = [];
+		for(var j = 0; j < grid[0].length; j++) {
+			// You can modify to check .visited first, if unvisited, display '#'.  This "hides" the grid, like in normal play.
+			if(grid[i][j].mine) {
+				report[i][j] = "!!!";
+			} else if(grid[i][j].visited) {
+				report[i][j] = '**' + grid[i][j].risk.toString() + '**';
+			} else {
+				report[i][j] = grid[i][j].risk.toString();
+			}
+			// Flags handled separately, as they display independent of .visited, .mine, or .risk.
+			if(grid[i][j].flag) {
+				report[i][j] = '@' + report[i][j] + '@';
+			}
+		}
+	} 
+
+	// DEBUG ONLY
+	console.table(report);
+
+	return report;
+};
 
 
+
+//=========================================================================================
+
+console.log("Welcome to AlbertMineSweeper!");
+//prompt("Press any key to begin . . . ");
 var grid = initialize();
+var numRow = grid.length;
+var numCol = grid[0].length;
+var report = printGrid(grid);
+
+console.log("To exit mid-game, enter a negative row number.");
+while(true) {
+	var row = Math.floor(prompt("row: "));
+	if (row < 0) {break;}
+	var col = Math.floor(prompt("col: "));
+	var requestFlag = prompt("flag? y/n: ");
+	if("y" === requestFlag.toLowerCase() || "yes" === requestFlag.toLowerCase()) {
+		setFlag(grid, row, col);
+	} else {
+		var dead = stomp(grid, row, col, numRow, numCol);
+	}
+	printGrid(grid);
+	if(dead){
+		console.log("You Died. BOOM!");
+		break;
+	} else {
+		if(winCheck(grid)){
+			console.log("You Win.")
+			break;
+		}
+	}
+}
+console.log("Please refresh page for a new game.");
