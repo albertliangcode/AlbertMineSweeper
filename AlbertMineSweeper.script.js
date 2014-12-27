@@ -88,10 +88,8 @@ var initialize = function() {
 
 /***Flagging/Unflagging Cells as Probable Mines***/
 var setFlag = function(grid, row, col) {
-	if(grid[row][col].flag) {
-		grid[row][col].flag = false;
-	} else {
-		grid[row][col].flag = true;
+	if(!grid[row][col].visited) {
+		grid[row][col].flag = !grid[row][col].flag;
 	}
 };
 
@@ -107,7 +105,8 @@ var stomp = function(grid, row, col, numRow, numCol) {
 		} else if (grid[row][col].risk === 0) {
 			for(var i = -1; i <= 1; i++) {
 				for(var j = -1; j <= 1; j++) {
-					if(!(i === 0 && j === 0)) {
+					isInsideGrid = (row + i >= 0 && col + j >= 0 && row + i < numRow && col + j < numCol);
+					if(isInsideGrid && !(i === 0 && j === 0)) {
 						stomp(grid, row + i, col + j, numRow, numCol);
 					} 
 				}
@@ -175,6 +174,7 @@ while(true) {
 	if (row < 0) {break;}
 	var col = Math.floor(prompt("col: "));
 	var requestFlag = prompt("flag? y/n: ");
+	if(requestFlag === null) {break;} //This was just because the exception being thrown bugged me.
 	if("y" === requestFlag.toLowerCase() || "yes" === requestFlag.toLowerCase()) {
 		setFlag(grid, row, col);
 	} else {
@@ -191,4 +191,4 @@ while(true) {
 		}
 	}
 }
-console.log("Please refresh page for a new game.");
+console.log("Please refresh page for a new game.\n");
