@@ -161,7 +161,10 @@ var printGrid = function(grid) {
 //=========================================================================================
 
 console.log("Welcome to AlbertMineSweeper!");
-//prompt("Press any key to begin . . . ");
+//Included this because debugging got tedious
+//   Does not work with '===', '==' does.
+if (prompt("Press [0] to begin . . . ") == 0) {
+
 var grid = initialize();
 var numRow = grid.length;
 var numCol = grid[0].length;
@@ -190,5 +193,7 @@ while(true) {
 		}
 	}
 }
+
+};
 console.log("Please refresh page for a new game.\n");
 
