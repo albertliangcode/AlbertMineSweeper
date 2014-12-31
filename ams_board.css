@@ -1,31 +1,45 @@
-div: {
+div {
 	border: 1px solid black;
-};
+}
 
-.base: {
+.base {
 	background-color: gray;
-	height: 400px;
-	width: 400px;
-};
+	height: 410px;
+	width: 410px;
+	//for a 15*15 grid.
+}
 
-.cell: {
+.cell {
 	background-color: blue;
 	height: 20px;
 	width: 20px;
-	position: absolute;
-};
+	position: relative;
+	display: inline-block;
+	margin: 0px;
+	padding: 0px;
 
-#1: {
-	top: 100px;
 	left: 5px;
-};
+}
 
-#2: {
-	top: 100px;
-	left: 35px;
-};
+.row {
+	display: block;
+	border: 0px;
+	position: relative;
+	top: 5px;
+}
 
-#3: {
+.red {
+	background-color: red;
+}
+
+#one {
+	background-color: yellow;
+}
+
+/*#_2 {
+	top: 200px;
+}
+
+#_3 {
 	top: 100px;
-	left: 65;
-};
+}*/
