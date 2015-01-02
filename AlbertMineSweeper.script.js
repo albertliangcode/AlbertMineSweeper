@@ -16,7 +16,7 @@
  * 	- mine=true, the game ends.
  * 	- risk!=0, set cell's visited=true;
  * 	- risk==0, the function recursively visits all neighbors with risk==0, stopping when it visits a cell with risk!=0.
- * Game ends when the only unvisited cells are cells where mine==true.
+ * Game ends when the only unvisited cells are cells where mine==true AND all mines are unvisited and flagged.
  */
 
 
@@ -29,171 +29,137 @@ function Cell() {
 }
 
 
-/***Initialize Grid***/
-var initialize = function() {
-  var numRow;
-  var numCol;
-  var numMines;
-  var isInsideGrid;
-  var grid;
-  var a;
-  var b;
-  
-	// Prompt user until valid input is recieved
-	while(true) {
-		numRow = prompt("How many rows? (Minimum 5)");
-		numCol = prompt("How many columns? (Minimum 5)");
-		numMines = prompt("How many mines? (Minimum 1)");
-		if (isNaN(numRow) || numRow < 5 || isNaN(numCol) || numCol < 5 || isNaN(numMines) || numMines < 1) {
-			alert("Please enter valid numbers for rows, columns, and mines.");
-		} else if (numMines >= numRow * numCol - 1) {
-			alert("You are in MINESWEEPER'S ROULETTE mode.");
-			numMines = numRow * numCol - 1;	//Just for humor.
-			break;
-		} else {
-			break;
-		}
-	}
-
-	// Generate grid of empty Cell Objects
-	grid = [];	 		//!!!Should I just create a Grid class to handle isInsideGrid, numRow, numCol, and unvisited Cells? Would need to find some way of overloading '[]'.!!!
-	for(var i = 0; i < numRow; i++) {
-		grid[i] = [];
-		for(var j = 0; j < numCol; j++) {
-			grid[i][j] = new Cell();
+function Grid(numRow, numCol, numMines) {
+	this.numRow = numRow;
+	this.numCol = numCol;
+	this.numMines = numMines;
+	
+	this.cells = [];
+	for(var i = 0; i < this.numRow; i++) {
+		this.cells[i] = [];
+		for(var j = 0; j < this.numCol; j++) {
+			this.cells[i][j] = new Cell();
 		}
 	} 
 
 	// Seed mines randomly in grid, adds them to minedCells[] and calculate each cell's risk
 	for(var c = 0; c < numMines; c++) {
-		a = Math.floor(numRow * Math.random());
-		b = Math.floor(numCol * Math.random());
-		if (grid[a][b].mine === true) {
+		var a = Math.floor(this.numRow * Math.random());
+		var b = Math.floor(this.numCol * Math.random());
+		if (this.cells[a][b].mine === true) {
 			c--;
 			continue;
 		}
-		grid[a][b].mine = true;
+		this.cells[a][b].mine = true;
 		for(var i = -1; i <= 1; i++) {
 			for(var j = -1; j <= 1; j++) {
-				isInsideGrid = (a + i >= 0 && b + j >= 0 && a + i < numRow && b + j < numCol);
+				var isInsideGrid = (a + i >= 0 && b + j >= 0 && a + i < this.numRow && b + j < this.numCol);
 				if(isInsideGrid && !(i === 0 && j === 0)) {
-					grid[a + i][b + j].risk += 1;
+					this.cells[a + i][b + j].risk += 1;
 				}
 			}
 		}
 	}
-	return grid;
-};
 
+	this.print = function() {
+		var report = [];
+		for(var i = 0; i < this.numRow; i++) {
+			report[i] = [];
+			for(var j = 0; j < this.numCol; j++) {
+				// You can modify to check .visited first, if unvisited, display '#'.  This "hides" the grid, like in normal play.
+				if(this.cells[i][j].mine) {
+					report[i][j] = "!!!";
+				} else if(this.cells[i][j].visited) {
+					report[i][j] = '**' + this.cells[i][j].risk.toString() + '**';
+				} else {
+					report[i][j] = this.cells[i][j].risk.toString();
+				}
+				// Flags handled separately, as they display independent of .visited, .mine, or .risk.
+				if(this.cells[i][j].flag) {
+					report[i][j] = '@' + report[i][j] + '@';
+				}
+			}
+		} 
 
-/***Flagging/Unflagging Cells as Probable Mines***/
-var setFlag = function(grid, row, col) {
-	if(!grid[row][col].visited) {
-		grid[row][col].flag = !grid[row][col].flag;
-	}
-};
+		// DEBUG ONLY
+		console.table(report);
 
+		return report;
+	};
 
-/***Game Response Each Time User Clicks a Cell***/
-var stomp = function(grid, row, col, numRow, numCol) {
-	if(row >= 0 && col >= 0 && row < numRow && col < numCol && !grid[row][col].visited && !grid[row][col].flag) {
-		grid[row][col].visited = true;
-		//!----->DISPLAY SQUARE<-----!
-		if (grid[row][col].mine === true) {
-			//!----->GAME OVER<-----!
+	this.stomp = function(row, col) {
+		if(row >= 0 && col >= 0 && row < this.numRow && col < this.numCol && !this.cells[row][col].visited && !this.cells[row][col].flag) {
+			this.cells[row][col].visited = true;
+			if (this.cells[row][col].mine === true) {
+				return true;
+			} else if (this.cells[row][col].risk === 0) {
+				for(var i = -1; i <= 1; i++) {
+					for(var j = -1; j <= 1; j++) {
+						if(!(i === 0 && j === 0)) {
+							this.stomp(row + i, col + j);
+						} 
+					}
+				}
+			}
+		}
+		return false;
+	};
+
+	// Returns true if cell is flaggable and has been flagged
+	// Returns false if cell cannot be flagged
+	this.setFlag = function(row, col) {
+		if(!this.cells[row][col].visited) {
+			this.cells[row][col].flag = !this.cells[row][col].flag;
 			return true;
-		} else if (grid[row][col].risk === 0) {
-			for(var i = -1; i <= 1; i++) {
-				for(var j = -1; j <= 1; j++) {
-					if(!(i === 0 && j === 0)) {
-						stomp(grid, row + i, col + j, numRow, numCol);
-					} 
+		} else {
+			return false;
+		}
+	};
+
+	this.winCheck = function() {
+		var cell;
+		for(var i = 0; i < this.cells.length; i++) {
+			for(var j = 0; j < this.cells[i].length; j++) {
+				cell = this.cells[i][j];
+				if(!cell.visited && !cell.mine) {
+					return false;
+				}
+				if(cell.mine && !cell.flag) {
+					return false;
 				}
 			}
 		}
-	}
-	return false;
-};
-
-
-/***Check for User Win***/
-var winCheck = function(grid) {
-	for(var i = 0; i < grid.length; i++) {
-		for(var j = 0; j < grid[i].length; j++) {
-			if(!grid[i][j].visited && !grid[i][j].mine) {
-				return false;
-			}
-		}
-	}
-	return true;
-};
-
-
-/***Print Grid***/
-var printGrid = function(grid) {
-	var report = [];
-	for(var i = 0; i < grid.length; i++) {
-		report[i] = [];
-		for(var j = 0; j < grid[0].length; j++) {
-			// You can modify to check .visited first, if unvisited, display '#'.  This "hides" the grid, like in normal play.
-			if(grid[i][j].mine) {
-				report[i][j] = "!!!";
-			} else if(grid[i][j].visited) {
-				report[i][j] = '**' + grid[i][j].risk.toString() + '**';
-			} else {
-				report[i][j] = grid[i][j].risk.toString();
-			}
-			// Flags handled separately, as they display independent of .visited, .mine, or .risk.
-			if(grid[i][j].flag) {
-				report[i][j] = '@' + report[i][j] + '@';
-			}
-		}
-	} 
-
-	// DEBUG ONLY
-	console.table(report);
-
-	return report;
-};
-
-
-
-//=========================================================================================
-
-console.log("Welcome to AlbertMineSweeper!");
-//Included this because debugging got tedious
-//   Does not work with '===', '==' does.
-if (prompt("Press [0] to begin . . . ") == 0) {
-
-var grid = initialize();
-var numRow = grid.length;
-var numCol = grid[0].length;
-var report = printGrid(grid);
-
-console.log("To exit mid-game, enter a negative row number.");
-while(true) {
-	var row = Math.floor(prompt("row: "));
-	if (row < 0) {break;}
-	var col = Math.floor(prompt("col: "));
-	var requestFlag = prompt("flag? y/n: ");
-	if(requestFlag === null) {break;} //This was just because the exception being thrown bugged me.
-	if("y" === requestFlag.toLowerCase() || "yes" === requestFlag.toLowerCase()) {
-		setFlag(grid, row, col);
-	} else {
-		var dead = stomp(grid, row, col, numRow, numCol);
-	}
-	printGrid(grid);
-	if(dead){
-		console.log("You Died. BOOM!");
-		break;
-	} else {
-		if(winCheck(grid)){
-			console.log("You Win.")
-			break;
-		}
-	}
+		return true;
+	};
 }
 
-};
-console.log("Please refresh page for a new game.\n");
+
+/**
+    * A curry helper method that captures the target cell location
+    * in a closure to be used later by the callback(row, column).
+    * The curried method will invoke the callback for each surrounding cell
+    * that is inside the grid.
+    * @param  {number}  row    -
+    * @param  {number}  col    - 
+    * @param  {number}  maxRow - 
+    * @param  {number}  maxCol - 
+    * @return {Boolean}        - 
+    */
+   function forEachSurroudingCell (row, col, maxRow, maxCol) {
+     /**
+      * Performs the callback for each cell that is inside the grid
+      * @param  {Function} callback - takes optional (row, column) arguments
+      */
+     return function (callback) {
+       var isInsideGrid = false;
+       for(var i = -1; i <= 1; i++) {
+         for(var j = -1; j <= 1; j++) {
+           isInsideGrid = (row + i >= 0 && col + j >= 0 && row + i < maxRow && col + j < maxCol);
+           if(isInsideGrid && !(i === 0 && j === 0)) {
+             callback(row + i, col + j);
+           }
+         }
+       }
+     }
+   }
 

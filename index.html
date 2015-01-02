@@ -4,70 +4,72 @@
 		<title>AlbertMineSweeper Board</title>
 		<link rel="stylesheet" type="text/css" href="ams_board.css">
 		<script type="text/javascript" src="/bower_components/jquery/dist/jquery.js"></script>
-		<script type="text/javascript" src="ui.js"></script>
+		<script type="text/javascript" src="ui.js" id="USER_INTERFACE"></script>
 	</head>
 
 	<body>
 		<h1>Albert Mine Sweeper</h1>
 		<h4>Project Status:</h4>
 		<ul>
-			<li>Current: Building Static Board</li>
-			<li>Next: Learn Refactoring Code to OOP</li>
+			<li>Current: End Conditions</li>
+			<li>Next: Adjustable Game</li>
+			<li>Next: User Interface for:
+				<ol>
+					<li>Resetting Game</li>
+					<li>Adjusting Game Settings</li>
+				</ol>
+			</li>
+			<li>Next: Clock</li>
+			<li>Next: Match Graphics to MS Minesweeper?</li>
 			<li>Complete:
 				<ul>
 					<li>Game Logic</li>
 					<li>GitHub/Sublime Setup</li>
+					<li>Code Refactoring</li>
+					<li>Reveal Squares when Clicked</li>
+					<li>Right-Click Flags</li>
 				</ul>
 			</li>
 		</ul>
 		<div class="base">
 			<div class="row"> 
-				<!--<div class="cell" id="one" onclick="click()"></div>-->
-				<div class="cell" id="one"></div>
-				<div class="cell"></div>
-				<div class="cell"></div>
-				<div class="cell"></div>
+				<!--The "." was needed, or else the margins in some of the cells became 
+				unbalanced when some cells were visted and others not yet visited.-->
+				<div class="cell" data-row="0" data-col="0">.</div>
+				<div class="cell" data-row="0" data-col="1">.</div>
+				<div class="cell" data-row="0" data-col="2">.</div>
+				<div class="cell" data-row="0" data-col="3">.</div>
+				<div class="cell" data-row="0" data-col="4">.</div>
 			</div>
 			<div class="row">
-				<div class="cell"></div>
-				<div class="cell"></div>
-				<div class="cell"></div>
-				<div class="cell"></div>
+				<div class="cell" data-row="1" data-col="0">.</div>
+				<div class="cell" data-row="1" data-col="1">.</div>
+				<div class="cell" data-row="1" data-col="2">.</div>
+				<div class="cell" data-row="1" data-col="3">.</div>
+				<div class="cell" data-row="1" data-col="4">.</div>
 			</div>
 			<div class="row">
-				<div class="cell"></div>
-				<div class="cell"></div>
-				<div class="cell"></div>
-				<div class="cell"></div>
+				<div class="cell" data-row="2" data-col="0">.</div>
+				<div class="cell" data-row="2" data-col="1">.</div>
+				<div class="cell" data-row="2" data-col="2">.</div>
+				<div class="cell" data-row="2" data-col="3">.</div>
+				<div class="cell" data-row="2" data-col="4">.</div>
 			</div>
 			<div class="row">
-				<div class="cell"></div>
-				<div class="cell"></div>
-				<div class="cell"></div>
-				<div class="cell"></div>
+				<div class="cell" data-row="3" data-col="0">.</div>
+				<div class="cell" data-row="3" data-col="1">.</div>
+				<div class="cell" data-row="3" data-col="2">.</div>
+				<div class="cell" data-row="3" data-col="3">.</div>
+				<div class="cell" data-row="3" data-col="4">.</div>
+			</div>
+			<div class="row">
+				<div class="cell" data-row="4" data-col="0">.</div>
+				<div class="cell" data-row="4" data-col="1">.</div>
+				<div class="cell" data-row="4" data-col="2">.</div>
+				<div class="cell" data-row="4" data-col="3">.</div>
+				<div class="cell" data-row="4" data-col="4">.</div>
 			</div>
 		</div>
-		<script> 
-		//function click() {
-			//document.getElementById("one").style.backgroundColor = "red";
-			//var element = document.querySelector("#one");
-			//element.style.backgroundColor = "red";
-			//document.getElementById("one").style.backgroundColor = "red";
-			//var cell = document.getElementById('cell');
-			//cell.setAttribute('background-color', 'red');
-
-
-		function clickme (el) {
-       		document.getElementById("one").style.backgroundColor = "red";
-		}
-
-		// $(document).ready(function(){
-		// 	$('.cell').click(function(){
-		// 		$(this).toggleClass('red');
-		// 	});
-		// });
-
-		</script>
-		<!--<script type="text/javascript" src="AlbertMineSweeper.script.js"></script>-->
+		<script type="text/javascript" src="AlbertMineSweeper.script.js"></script>
 	</body>
 </html>
