@@ -1,14 +1,19 @@
-// Called after a WIN or a LOSS.
-// Intended to disconnect the user interface from the game state, 
-// freezing the html and preventing the user from playing the game
-// any further.
-// User would be forced to either quit or refresh the page for
-// a new game.
+
+/* Called after a WIN or a LOSS.
+ * Intended to disconnect the user interface from the game state, 
+ * freezing the html and preventing the user from playing the game
+ * any further.
+ * User would be forced to either quit or refresh the page for
+ * a new game.
+ * 
+ * Current plan: Overlay a Div in front of the board, displaying message. Later, will also provide button to refresh.
+ */
+
 var stopGame = function () {
 	// $("script:eq(1)").remove();	//#1
 
 	//$("#USER_INTERFACE").remove();	//#2
-	
+
 	//$(document).replace("script", "NOT_A_SCRIPT");	//#3
 
 	// var replaceLoc = $(document.head);	//#4
@@ -20,7 +25,8 @@ var stopGame = function () {
 
 
 $(document).ready(function() {
-	document.oncontextmenu = function() {return false;};
+	//Must bind contextmenu event handler to each cell
+	//document.oncontextmenu = function() {return false;};
 	var grid = new Grid(5,5,2);
 	var report = grid.print();
 	

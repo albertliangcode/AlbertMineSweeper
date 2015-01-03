@@ -6,7 +6,7 @@ div {
 	background-color: gray;
 	height: 410px;
 	width: 410px;
-	<!--for a 15*15 grid.-->
+	/*for a 15*15 grid.*/
 }
 
 .cell {
@@ -19,8 +19,11 @@ div {
 	padding: 2px;
 	text-align: center;
 	color: blue;
-
 	left: 5px;
+
+	display: flex; 
+	align-items: center; 
+	justify-content: center; 
 }
 
 .row {
@@ -28,6 +31,7 @@ div {
 	border: 0px;
 	position: relative;
 	top: 5px;
+	display: flex;
 }
 
 .red {

@@ -118,8 +118,8 @@ function Grid(numRow, numCol, numMines) {
 
 	this.winCheck = function() {
 		var cell;
-		for(var i = 0; i < this.cells.length; i++) {
-			for(var j = 0; j < this.cells[i].length; j++) {
+		for(var i = 0; i < this.numRow; i++) {
+			for(var j = 0; j < this.numCol; j++) {
 				cell = this.cells[i][j];
 				if(!cell.visited && !cell.mine) {
 					return false;
