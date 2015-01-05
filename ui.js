@@ -27,7 +27,7 @@ var stopGame = function () {
 $(document).ready(function() {
 	//Must bind contextmenu event handler to each cell
 	//document.oncontextmenu = function() {return false;};
-	var grid = new Grid(5,5,2);
+	var grid = new Grid(7,7,5);
 	var report = grid.print();
 	
 	$('.cell').mousedown(function(event) {

@@ -37,10 +37,16 @@ function Grid(numRow, numCol, numMines) {
 	this.cells = [];
 	for(var i = 0; i < this.numRow; i++) {
 		this.cells[i] = [];
+		$(".base").append("<div class=\"row\" id=\"row" + i.toString() + "\"><div>");
 		for(var j = 0; j < this.numCol; j++) {
 			this.cells[i][j] = new Cell();
+			$("#row"+i.toString()).append("<div class=\"cell\" data-row=\"" + i.toString() + "\" data-col=\"" + j.toString() + "\"></div>");
 		}
-	} 
+	}
+	// Adjust Dimensions of Base
+	var edgeThickness = 2 * (parseInt($(".cell").css("border-left-width")) + parseInt($(".cell").css("margin")) + parseInt($(".cell").css("padding")));
+	$(".base").height(numRow * ($(".cell").height() + edgeThickness) + 10);
+	$(".base").width(numCol * ($(".cell").width() + edgeThickness) + 10);
 
 	// Seed mines randomly in grid, adds them to minedCells[] and calculate each cell's risk
 	for(var c = 0; c < numMines; c++) {

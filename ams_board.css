@@ -4,9 +4,6 @@ div {
 
 .base {
 	background-color: gray;
-	height: 410px;
-	width: 410px;
-	/*for a 15*15 grid.*/
 }
 
 .cell {
