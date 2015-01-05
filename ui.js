@@ -25,11 +25,15 @@ var stopGame = function () {
 
 
 $(document).ready(function() {
-	//Must bind contextmenu event handler to each cell
-	//document.oncontextmenu = function() {return false;};
-	var grid = new Grid(7,7,5);
-	var report = grid.print();
-	
+	var grid;
+	var report;
+	$('#gridSetup').submit(function(){
+		var $values = $('#gridSetup').serializeArray();
+		grid = new Grid(parseInt($values[0].value),parseInt($values[1].value),parseInt($values[2].value));
+		// var grid = new Grid(7,7,5);
+		report = grid.print();
+	}); // <<<The program kicks me out here.>>>
+
 	$('.cell').mousedown(function(event) {
 		var row = $(this).data('row');
 		var col = $(this).data('col');
